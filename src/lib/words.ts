@@ -63,7 +63,7 @@ export const getWordOfDay = () => {
     solution: WORDS[index % WORDS.length].toUpperCase(),
     solutionIndex: index,
     tomorrow: nextday,
-    solutionLenght: WORDS[index % WORDS.length].length,
+    solutionLength: WORDS[index % WORDS.length].length,
     maxChallenges: WORDS[index % WORDS.length].length < 4 ? 5 : 6,
   }
 }
@@ -72,6 +72,6 @@ export const {
   solution,
   solutionIndex,
   tomorrow,
-  solutionLenght,
+  solutionLength,
   maxChallenges,
 } = getWordOfDay()

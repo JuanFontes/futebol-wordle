@@ -25,7 +25,7 @@ import {
   isWordInWordList,
   isWinningWord,
   solution,
-  solutionLenght,
+  solutionLength,
   maxChallenges,
   findFirstUnusedReveal,
 } from './lib/words'
@@ -121,7 +121,7 @@ function App() {
     if (isGameWon) {
       const winMessage =
         WIN_MESSAGES[Math.floor(Math.random() * WIN_MESSAGES.length)]
-      const delayMs = REVEAL_TIME_MS * solutionLenght
+      const delayMs = REVEAL_TIME_MS * solutionLength
 
       showSuccessAlert(winMessage, {
         delayMs,
@@ -132,13 +132,13 @@ function App() {
     if (isGameLost) {
       setTimeout(() => {
         setIsStatsModalOpen(true)
-      }, (solutionLenght + 1) * REVEAL_TIME_MS)
+      }, (solutionLength + 1) * REVEAL_TIME_MS)
     }
   }, [isGameWon, isGameLost, showSuccessAlert])
 
   const onChar = (value: string) => {
     if (
-      currentGuess.length < solutionLenght &&
+      currentGuess.length < solutionLength &&
       guesses.length < maxChallenges &&
       !isGameWon
     ) {
@@ -154,7 +154,7 @@ function App() {
     if (isGameWon || isGameLost) {
       return
     }
-    if (!(currentGuess.length === solutionLenght)) {
+    if (!(currentGuess.length === solutionLength)) {
       showErrorAlert(NOT_ENOUGH_LETTERS_MESSAGE)
       setCurrentRowClass('jiggle')
       return setTimeout(() => {
@@ -188,12 +188,12 @@ function App() {
     // chars have been revealed
     setTimeout(() => {
       setIsRevealing(false)
-    }, REVEAL_TIME_MS * solutionLenght)
+    }, REVEAL_TIME_MS * solutionLength)
 
     const winningWord = isWinningWord(currentGuess)
 
     if (
-      currentGuess.length === solutionLenght &&
+      currentGuess.length === solutionLength &&
       guesses.length < maxChallenges &&
       !isGameWon
     ) {
@@ -210,7 +210,7 @@ function App() {
         setIsGameLost(true)
         showErrorAlert(CORRECT_WORD_MESSAGE(solution), {
           persist: true,
-          delayMs: REVEAL_TIME_MS * solutionLenght + 1,
+          delayMs: REVEAL_TIME_MS * solutionLength + 1,
         })
       }
     }
