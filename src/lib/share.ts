@@ -1,8 +1,7 @@
 import { getGuessStatuses } from './statuses'
-import { solutionIndex } from './words'
+import { solutionIndex, maxChallenges } from './words'
 import { GAME_TITLE } from '../constants/strings'
 import { getStoredIsHighContrastMode } from './localStorage'
-import { MAX_CHALLENGES } from '../constants/settings'
 
 export const shareStatus = (
   guesses: string[],
@@ -12,8 +11,7 @@ export const shareStatus = (
   navigator.clipboard.writeText(
     `${GAME_TITLE} ${solutionIndex} ${
       lost ? 'X' : guesses.length
-    }/${MAX_CHALLENGES}${isHardMode ? '*' : ''}\n\n` +
-      generateEmojiGrid(guesses)
+    }/${maxChallenges}${isHardMode ? '*' : ''}\n\n` + generateEmojiGrid(guesses)
   )
 }
 
@@ -37,9 +35,6 @@ export const generateEmojiGrid = (guesses: string[]) => {
               }
               return '🟨'
             default:
-              if (localStorage.getItem('theme') === 'dark') {
-                return '⬛'
-              }
               return '⬜'
           }
         })
