@@ -14,6 +14,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
+            
       - run:
           name: Install apks
           command: apk add openssh git
@@ -46,12 +47,20 @@ jobs:
 
       - run:
           name: Run test
-          command: npm run test
+          command: npm run test   
 
-workflows:
+workflow:
   build_and_test:
     jobs:
-      - build
       - test:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          filters:
+            tags:
+              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
+            branches:
+              only: main
           requires:
-            - build
+            - test
