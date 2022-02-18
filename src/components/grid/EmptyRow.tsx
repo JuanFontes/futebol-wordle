@@ -1,8 +1,8 @@
 import { Cell } from './Cell'
-import { solutionLenght } from '../../lib/words'
+import { solutionLength } from '../../lib/words'
 
 export const EmptyRow = () => {
-  const emptyCells = Array.from(Array(solutionLenght))
+  const emptyCells = Array.from(Array(solutionLength))
 
   return (
     <div className="flex justify-center mb-1">
