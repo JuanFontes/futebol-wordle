@@ -21,7 +21,7 @@ export const SettingsToggle = ({ settingName, flag, handleFlag }: Props) => {
   )
   return (
     <div className="flex justify-between items-center gap-8 mt-2">
-      <h2 className="text-gray-500 dark:text-gray-300">{settingName}</h2>
+      <h2 className="text-gray-500">{settingName}</h2>
       <div className={toggleHolder} onClick={() => handleFlag(!flag)}>
         <div className={toggleButton} />
       </div>
