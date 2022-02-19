@@ -1,6 +1,29 @@
 version: 2.1
 
 jobs:  
+
+  test:
+    working_directory: ~/repo
+    docker:
+      - image: node:16.14.0-alpine3.14
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      - run:
+          name: Install dependencies
+          command: npm ci
+
+      - run:
+          name: Run lint
+          command: npm run lint
+
+      - run:
+          name: Run test
+          command: npm run test   
+
   build:
     working_directory: ~/repo
     docker:
@@ -27,33 +50,13 @@ jobs:
           name: Deploy to gh-pages
           command: npm run deploy
 
-  test:
-    working_directory: ~/repo
-    docker:
-      - image: node:16.14.0-alpine3.14
-
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-
-      - run:
-          name: Install dependencies
-          command: npm ci
-
-      - run:
-          name: Run lint
-          command: npm run lint
-
-      - run:
-          name: Run test
-          command: npm run test   
-
-workflow:
+workflows:
   build_and_test:
     jobs:
       - test:
           filters:
+            branches:
+              ignore: gh-pages
             tags:
               only: /.*/
       - build:
