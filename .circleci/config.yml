@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0
 jobs:
-  setup:
+  node/run:
     executor:
       name: node/default
       tag: '16.14'
@@ -21,6 +21,4 @@ workflows:
           npm-run: deploy
           requires:
             - node/test
-            - setup
       - node/test
-      - setup
