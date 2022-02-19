@@ -8,9 +8,14 @@ jobs:
       - image: node:16.14.0-alpine3.14
 
     steps:
-      - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+
+      - run:
+          name: Install apks
+          command: apk add openssh git
+
+      - checkout
 
       - run:
           name: Install dependencies
@@ -30,17 +35,18 @@ jobs:
       - image: node:16.14.0-alpine3.14
 
     steps:
-      - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+
+      - run:
+          name: Install apks
+          command: apk add openssh git
+
+      - checkout
 
       - add_ssh_keys:
           fingerprints:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
-            
-      - run:
-          name: Install apks
-          command: apk add openssh git
 
       - run:
           name: Install dependencies
