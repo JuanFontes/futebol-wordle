@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0
 jobs:
-  deploy:
+  node/run:
     executor:
       name: node/default
       tag: '16.14'
@@ -13,16 +13,12 @@ jobs:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
       - node/install-packages:
           cache-path: ~/project/node_modules
-      - run: 
-          command: npm run deploy
 
 workflows:
   test_and_deploy:
     jobs:
-      - node/test
-      - deploy:
-          filters:
-            branches:
-              only: main
+      - node/run:
+          npm-run: deploy
           requires:
             - node/test
+      - node/test
