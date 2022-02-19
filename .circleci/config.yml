@@ -11,6 +11,8 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
+      - node/install-packages:
+          cache-path: ~/project/node_modules
       - run: 
           command: npm run deploy
 
