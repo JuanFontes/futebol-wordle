@@ -1,9 +1,18 @@
 version: 2.1
 orbs:
   node: circleci/node@5.0
-
-jobs:  
+jobs:
   test:
+    executor:
+      name: node/default
+      tag: '16.14'
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run test
+
+  deploy:
     executor:
       name: node/default
       tag: '16.14'
@@ -14,13 +23,18 @@ jobs:
       - checkout
       - node/install-packages
       - run:
-          command: npm run test
-
+          command: npm run deploy
+  
 workflows:
-  run-npm-command:
+  test_and_deploy:
     jobs:
-      - node/run:
-          npm-run: deploy
+      - test:
+          filters:
+            branches:
+              ignore: gh-pages
+            tags:
+              only: /.*/
+      - deploy:
           filters:
             tags:
               only: /^[0-9]+\.[0-9]+\.[0-9]+$/
@@ -28,9 +42,3 @@ workflows:
               only: main
           requires:
             - test
-      - test:
-          filters:
-            branches:
-              ignore: gh-pages
-            tags:
-              only: /.*/
