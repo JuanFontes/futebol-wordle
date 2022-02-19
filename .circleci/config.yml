@@ -6,7 +6,9 @@ jobs:
     docker:
       - image: cimg/node:16.14.0
     steps:
-      - add_ssh_keys
+      - add_ssh_keys:
+          fingerprints:
+            - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
 
 workflows:
   test_and_deploy:
@@ -14,12 +16,13 @@ workflows:
       - node/test
       - deploy:
           filters:
-            tags:
-              only: /^[0-9]+\.[0-9]+\.[0-9]+$/
             branches:
               only: main
       - node/run:
           npm-run: deploy
+          filters:
+            branches:
+              only: main
           requires:
             - node/test
             - deploy
