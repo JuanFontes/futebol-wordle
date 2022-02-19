@@ -3,12 +3,14 @@ orbs:
   node: circleci/node@5.0
 
 jobs:  
-
   test:
     executor:
       name: node/default
       tag: '16.14'
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
       - checkout
       - node/install-packages
       - run:
@@ -32,4 +34,3 @@ workflows:
               ignore: gh-pages
             tags:
               only: /.*/
-  
