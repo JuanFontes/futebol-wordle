@@ -50,12 +50,13 @@ jobs:
           name: Deploy to gh-pages
           command: npm run deploy
 
-workflow:
+workflows:
   build_and_test:
     jobs:
       - test:
           filters:
-            ignore: gh-pages
+            branches:
+              ignore: gh-pages
             tags:
               only: /.*/
       - build:
