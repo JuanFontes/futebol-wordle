@@ -1,5 +1,5 @@
 
-# Futebol Wordle
+# Futebol Wordle - [![CircleCI](https://circleci.com/gh/JuanFontes/futebol-wordle/tree/main.svg?style=svg)](https://circleci.com/gh/JuanFontes/futebol-wordle/tree/main)
 
 [Futebol Wordle](https://juanfontes.github.io/futebol-wordle/) é um projeto _forkado_ do [react-wordle](https://github.com/cwackerfuss/react-wordle). Thanks [cwackerfuss](https://github.com/cwackerfuss).
 
