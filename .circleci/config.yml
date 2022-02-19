@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@5.0
 jobs:
-  node/run:
+  deploy: &deploy
     executor:
       name: node/default
       tag: '16.14'
@@ -13,6 +13,9 @@ jobs:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
       - node/install-packages:
           cache-path: ~/project/node_modules
+
+  node/run:
+    <<: *deploy
 
 workflows:
   test_and_deploy:
