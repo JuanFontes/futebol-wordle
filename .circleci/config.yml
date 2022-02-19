@@ -12,14 +12,14 @@ workflows:
   test_and_deploy:
     jobs:
       - node/test
-      - deploy
-      - node/run:
-          npm-run: deploy
+      - deploy:
           filters:
             tags:
               only: /^[0-9]+\.[0-9]+\.[0-9]+$/
             branches:
               only: main
+      - node/run:
+          npm-run: deploy
           requires:
             - node/test
             - deploy
