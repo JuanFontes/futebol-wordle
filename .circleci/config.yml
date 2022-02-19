@@ -3,12 +3,16 @@ orbs:
   node: circleci/node@5.0
 jobs:
   deploy:
-    docker:
-      - image: cimg/node:16.14.0
+    executor:
+      name: node/default
+      tag: '16.14'
     steps:
+      - checkout
       - add_ssh_keys:
           fingerprints:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
+      - run: 
+          command: npm run deploy
 
 workflows:
   test_and_deploy:
@@ -18,11 +22,5 @@ workflows:
           filters:
             branches:
               only: main
-      - node/run:
-          npm-run: deploy
-          filters:
-            branches:
-              only: main
           requires:
             - node/test
-            - deploy
