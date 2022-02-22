@@ -1,13 +1,13 @@
 version: 2.1
 commands:
-  sayhello:
+  npm-run:
     description: "A very simple command for demonstration purposes"
     parameters:
       to:
         type: string
         default: "World"
     steps:
-      - run: echo Hello << parameters.to >>
+      - run: echo Hello 
 
 orbs:
     node: circleci/node@5.0.0
