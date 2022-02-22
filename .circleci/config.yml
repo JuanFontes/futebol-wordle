@@ -23,8 +23,7 @@ workflows:
             tags:
               only: /^[0-9]+\.[0-9]+\.[0-9]+$/
             branches:
-              only: main
+              only: circleci-editor/178/main
           requires:
             - node/test
       - node/test
-
