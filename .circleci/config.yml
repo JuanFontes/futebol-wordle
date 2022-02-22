@@ -1,27 +1,24 @@
 version: 2.1
 orbs:
   node: circleci/node@5.0.0
-jobs:
-  deploy:
-    executor:
-      name: node/default
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
-      - node/install-packages:
-          cache-path: ~/project/node_modules
-          override-ci-command: npm install
-      - run: npm run deploy
 
 workflows:
-  test_and_deploy:
+  run-deploy:
     jobs:
-      - deploy:
+      - node/test
+      - node/run:
+          npm-run: deploy
           filters:
             branches:
               only: main
           requires:
             - node/test
-      - node/test
+
+jobs:
+  node/run:
+    executor:
+      name: node/run
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
