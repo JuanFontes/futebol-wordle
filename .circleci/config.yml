@@ -1,20 +1,27 @@
 version: 2.1
-commands:
-  deploy:
-    steps:
-      - run: echo Hello 
-
 orbs:
-    node: circleci/node@5.0.0
+  node: circleci/node@5.0.0
+jobs:
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
+      - node/install-packages:
+          cache-path: ~/project/node_modules
+          override-ci-command: npm install
+      - run: npm run deploy
 
 workflows:
-  run-deploy:
+  test_and_deploy:
     jobs:
-      - node/test
-      - node/run:
-          npm-run: deploy
+      - deploy:
           filters:
             branches:
               only: main
           requires:
             - node/test
+      - node/test
