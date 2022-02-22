@@ -1,11 +1,6 @@
 version: 2.1
 commands:
-  npm-run:
-    description: "A very simple command for demonstration purposes"
-    parameters:
-      to:
-        type: string
-        default: "World"
+  run-npm-command:
     steps:
       - run: echo Hello 
 
