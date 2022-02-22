@@ -1,6 +1,6 @@
 version: 2.1
 commands:
-  run-npm-command:
+  deploy:
     steps:
       - run: echo Hello 
 
