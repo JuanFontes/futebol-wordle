@@ -5,6 +5,7 @@ orbs:
 workflows:
   run-deploy:
     jobs:
+      - deploy
       - node/test
       - node/run:
           npm-run: deploy
@@ -13,3 +14,13 @@ workflows:
               only: main
           requires:
             - node/test
+            - deploy
+jobs:
+  deploy:
+    executor:
+      name: node/default
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
+
