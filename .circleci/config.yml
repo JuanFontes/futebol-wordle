@@ -1,10 +1,12 @@
 version: 2.1
 orbs:
   node: circleci/node@5.0.0
-steps:
-  - add_ssh_keys:
-      fingerprints:
-        - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
+commands: 
+    node-run:
+      steps:
+        - add_ssh_keys:
+            fingerprints:
+              - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
 
 workflows:
   run-deploy:
