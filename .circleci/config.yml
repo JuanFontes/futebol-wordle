@@ -17,7 +17,7 @@ jobs:
 workflows:
   test_and_deploy:
     jobs:
-      - node/run:
+      - setup:
         add_ssh_keys:
           fingerprints:
             - "be:e3:f5:4a:43:d6:1f:ea:5b:0a:60:ef:15:cd:da:62"
