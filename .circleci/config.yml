@@ -5,7 +5,6 @@ orbs:
 workflows:
   run-deploy:
     jobs:
-      - deploy
       - node/test
       - node/run:
           npm-run: deploy
@@ -14,9 +13,8 @@ workflows:
               only: main
           requires:
             - node/test
-            - deploy
 jobs:
-  deploy:
+  node/run:
     executor:
       name: node/default
     steps:
