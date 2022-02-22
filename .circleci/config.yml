@@ -16,7 +16,7 @@ workflows:
 jobs:
   node/run:
     executor:
-      name: node/default
+      name: node/run
     steps:
       - add_ssh_keys:
           fingerprints:
