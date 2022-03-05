@@ -1,8 +1,3 @@
-import {
-  InformationCircleIcon,
-  ChartBarIcon,
-  CogIcon,
-} from '@heroicons/react/outline'
 import { useState, useEffect } from 'react'
 import { Grid } from './components/grid/Grid'
 import { Keyboard } from './components/keyboard/Keyboard'
@@ -11,7 +6,6 @@ import { InfoModal } from './components/modals/InfoModal'
 import { StatsModal } from './components/modals/StatsModal'
 import { SettingsModal } from './components/modals/SettingsModal'
 import {
-  GAME_TITLE,
   WIN_MESSAGES,
   GAME_COPIED_MESSAGE,
   NOT_ENOUGH_LETTERS_MESSAGE,
@@ -20,7 +14,13 @@ import {
   HARD_MODE_ALERT_MESSAGE,
   ABOUT_GAME_MESSAGE,
 } from './constants/strings'
-import { ALERT_TIME_MS, REVEAL_TIME_MS } from './constants/settings'
+import {
+  MAX_WORD_LENGTH,
+  MAX_CHALLENGES,
+  REVEAL_TIME_MS,
+  GAME_LOST_INFO_DELAY,
+  WELCOME_INFO_MODAL_MS,
+} from './constants/settings'
 import {
   isWordInWordList,
   isWinningWord,
@@ -28,6 +28,7 @@ import {
   solutionLength,
   maxChallenges,
   findFirstUnusedReveal,
+  unicodeLength,
 } from './lib/words'
 import { addStatsForCompletedGame, loadStats } from './lib/stats'
 import {
@@ -36,10 +37,12 @@ import {
   setStoredIsHighContrastMode,
   getStoredIsHighContrastMode,
 } from './lib/localStorage'
+import { default as GraphemeSplitter } from 'grapheme-splitter'
 
 import './App.css'
 import { AlertContainer } from './components/alerts/AlertContainer'
 import { useAlert } from './context/AlertContext'
+import { Navbar } from './components/navbar/Navbar'
 
 function App() {
   const { showError: showErrorAlert, showSuccess: showSuccessAlert } =
@@ -87,7 +90,9 @@ function App() {
     // if no game state on load,
     // show the user the how-to info modal
     if (!loadGameStateFromLocalStorage()) {
-      setIsInfoModalOpen(true)
+      setTimeout(() => {
+        setIsInfoModalOpen(true)
+      }, WELCOME_INFO_MODAL_MS)
     }
   }, [])
 
@@ -111,6 +116,10 @@ function App() {
   const handleHighContrastMode = (isHighContrast: boolean) => {
     setIsHighContrastMode(isHighContrast)
     setStoredIsHighContrastMode(isHighContrast)
+  }
+
+  const clearCurrentRowClass = () => {
+    setCurrentRowClass('')
   }
 
   useEffect(() => {
@@ -147,39 +156,38 @@ function App() {
   }
 
   const onDelete = () => {
-    setCurrentGuess(currentGuess.slice(0, -1))
+    setCurrentGuess(
+      new GraphemeSplitter().splitGraphemes(currentGuess).slice(0, -1).join('')
+    )
   }
 
   const onEnter = () => {
     if (isGameWon || isGameLost) {
       return
     }
-    if (!(currentGuess.length === solutionLength)) {
-      showErrorAlert(NOT_ENOUGH_LETTERS_MESSAGE)
+
+    if (!(unicodeLength(currentGuess) === MAX_WORD_LENGTH)) {
       setCurrentRowClass('jiggle')
-      return setTimeout(() => {
-        setCurrentRowClass('')
-      }, ALERT_TIME_MS)
+      return showErrorAlert(NOT_ENOUGH_LETTERS_MESSAGE, {
+        onClose: clearCurrentRowClass,
+      })
     }
 
     if (!isWordInWordList(currentGuess)) {
-      showErrorAlert(WORD_NOT_FOUND_MESSAGE)
-      console.log(solution)
       setCurrentRowClass('jiggle')
-      return setTimeout(() => {
-        setCurrentRowClass('')
-      }, ALERT_TIME_MS)
+      return showErrorAlert(WORD_NOT_FOUND_MESSAGE, {
+        onClose: clearCurrentRowClass,
+      })
     }
 
     // enforce hard mode - all guesses must contain all previously revealed letters
     if (isHardMode) {
       const firstMissingReveal = findFirstUnusedReveal(currentGuess, guesses)
       if (firstMissingReveal) {
-        showErrorAlert(firstMissingReveal)
         setCurrentRowClass('jiggle')
-        return setTimeout(() => {
-          setCurrentRowClass('')
-        }, ALERT_TIME_MS)
+        return showErrorAlert(firstMissingReveal, {
+          onClose: clearCurrentRowClass,
+        })
       }
     }
 
@@ -193,8 +201,8 @@ function App() {
     const winningWord = isWinningWord(currentGuess)
 
     if (
-      currentGuess.length === solutionLength &&
-      guesses.length < maxChallenges &&
+      unicodeLength(currentGuess) === MAX_WORD_LENGTH &&
+      guesses.length < MAX_CHALLENGES &&
       !isGameWon
     ) {
       setGuesses([...guesses, currentGuess])
@@ -217,73 +225,56 @@ function App() {
   }
 
   return (
-    <div className="pt-2 pb-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div className="flex w-80 mx-auto items-center mb-8 mt-8">
-        <h1 className="text-xl ml-20.5 grow font-bold text-white">
-          {GAME_TITLE}
-        </h1>
-        <InformationCircleIcon
-          className="h-6 w-6 mr-2 cursor-pointer stroke-white"
-          onClick={() => setIsInfoModalOpen(true)}
+    <div className="h-screen flex flex-col">
+      <Navbar
+        setIsInfoModalOpen={setIsInfoModalOpen}
+        setIsStatsModalOpen={setIsStatsModalOpen}
+        setIsSettingsModalOpen={setIsSettingsModalOpen}
+      />
+      <div className="pt-2 px-1 pb-8 md:max-w-7xl w-full mx-auto sm:px-6 lg:px-8 flex flex-col grow">
+        <div className="pb-6 grow">
+          <Grid
+            guesses={guesses}
+            currentGuess={currentGuess}
+            isRevealing={isRevealing}
+            currentRowClassName={currentRowClass}
+          />
+        </div>
+        <Keyboard
+          onChar={onChar}
+          onDelete={onDelete}
+          onEnter={onEnter}
+          guesses={guesses}
+          isRevealing={isRevealing}
         />
-        <ChartBarIcon
-          className="h-6 w-6 mr-3 cursor-pointer stroke-white"
-          onClick={() => setIsStatsModalOpen(true)}
+        <InfoModal
+          isOpen={isInfoModalOpen}
+          handleClose={() => setIsInfoModalOpen(false)}
         />
-        <CogIcon
-          className="h-6 w-6 mr-3 cursor-pointer stroke-white"
-          onClick={() => setIsSettingsModalOpen(true)}
+        <StatsModal
+          isOpen={isStatsModalOpen}
+          handleClose={() => setIsStatsModalOpen(false)}
+          guesses={guesses}
+          gameStats={stats}
+          isGameLost={isGameLost}
+          isGameWon={isGameWon}
+          handleShareToClipboard={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
+          isHardMode={isHardMode}
+          isDarkMode={isDarkMode}
+          isHighContrastMode={isHighContrastMode}
         />
+        <SettingsModal
+          isOpen={isSettingsModalOpen}
+          handleClose={() => setIsSettingsModalOpen(false)}
+          isHardMode={isHardMode}
+          handleHardMode={handleHardMode}
+          isDarkMode={isDarkMode}
+          handleDarkMode={handleDarkMode}
+          isHighContrastMode={isHighContrastMode}
+          handleHighContrastMode={handleHighContrastMode}
+        />
+        <AlertContainer />
       </div>
-      <Grid
-        guesses={guesses}
-        currentGuess={currentGuess}
-        isRevealing={isRevealing}
-        currentRowClassName={currentRowClass}
-      />
-      <Keyboard
-        onChar={onChar}
-        onDelete={onDelete}
-        onEnter={onEnter}
-        guesses={guesses}
-        isRevealing={isRevealing}
-      />
-      <InfoModal
-        isOpen={isInfoModalOpen}
-        handleClose={() => setIsInfoModalOpen(false)}
-      />
-      <StatsModal
-        isOpen={isStatsModalOpen}
-        handleClose={() => setIsStatsModalOpen(false)}
-        guesses={guesses}
-        gameStats={stats}
-        isGameLost={isGameLost}
-        isGameWon={isGameWon}
-        handleShare={() => showSuccessAlert(GAME_COPIED_MESSAGE)}
-        isHardMode={isHardMode}
-      />
-      <SettingsModal
-        isOpen={isSettingsModalOpen}
-        handleClose={() => setIsSettingsModalOpen(false)}
-        isHardMode={isHardMode}
-        handleHardMode={handleHardMode}
-        isHighContrastMode={isHighContrastMode}
-        handleHighContrastMode={handleHighContrastMode}
-      />
-      <AboutModal
-        isOpen={isAboutModalOpen}
-        handleClose={() => setIsAboutModalOpen(false)}
-      />
-
-      <AlertContainer />
-
-      <button
-        type="button"
-        className="mx-auto mt-10 flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-black-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 select-none"
-        onClick={() => setIsAboutModalOpen(true)}
-      >
-        {ABOUT_GAME_MESSAGE}
-      </button>
     </div>
   )
 }
