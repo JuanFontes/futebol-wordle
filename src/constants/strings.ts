@@ -11,7 +11,14 @@ export const ABOUT_GAME_MESSAGE = 'Sobre este jogo'
 export const NOT_ENOUGH_LETTERS_MESSAGE = 'Tá faltando letra aí, jogador!'
 export const WORD_NOT_FOUND_MESSAGE = 'Time não encontrado, que fase!'
 export const HARD_MODE_ALERT_MESSAGE =
+<<<<<<< HEAD
   'Modo difícil só pode ser habilitado no início!'
+=======
+  'Hard Mode can only be enabled at the start!'
+export const HARD_MODE_DESCRIPTION =
+  'Any revealed hints must be used in subsequent guesses'
+export const HIGH_CONTRAST_MODE_DESCRIPTION = 'For improved color vision'
+>>>>>>> 7d1a95b867d250bd060c4faa244b7eff9c929f10
 export const CORRECT_WORD_MESSAGE = (solution: string) =>
   `Ele pensou: "Agora eu se consagro!" O time era: ${solution}`
 export const WRONG_SPOT_MESSAGE = (guess: string, position: number) =>
