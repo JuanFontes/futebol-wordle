@@ -39,6 +39,6 @@ workflows:
             - node/run
       - node/run:
           npm-run: lint 
+      - node/test:
           requires:
-            - node/test
-      - node/test
+            - node/run
